@@ -20,7 +20,6 @@ RUN apt-get update && apt-get install -y debootstrap && \
     chroot ./rootfs find /usr/share/locale -type f -delete
 
 FROM scratch
-LABEL maintainer='Peter Wu <piterwu@outlook.com>'
 COPY --from=0 /rootfs /
 
 ENV TERM=xterm \
