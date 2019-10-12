@@ -1,6 +1,23 @@
-FROM alpine
-RUN mkdir /rootfs &&
-  wget -O - https://github.com/bestwu/docker-deepin/raw/f3078c226c25937970d2c368d7a577b7ed4e5f35/amd64/rootfs.tar.xz | tar -xJvC /rootfs
+FROM debian
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+COPY ./stable /usr/share/debootstrap/scripts/stable
+COPY ./deepin-archive-keyring.gpg /usr/share/keyrings/deepin-archive-keyring.gpg
+COPY ./deepin-pools-keyring.gpg /root/deepin-pools-keyring.gpg
+RUN apt-get update && apt-get install -y debootstrap && \
+    debootstrap --variant=minbase --no-check-gpg --arch=amd64 lion rootfs http://packages.deepin.com/deepin/ && \
+    cp /usr/share/keyrings/deepin-archive-keyring.gpg rootfs/etc/apt/trusted.gpg.d/ && \
+    cp /root/deepin-pools-keyring.gpg rootfs/etc/apt/trusted.gpg.d/ && \
+    chroot ./rootfs apt-get autoclean && \
+    chroot ./rootfs apt-get clean && \
+    chroot ./rootfs rm -rvf /usr/share/icons/Adwaita && \
+    chroot ./rootfs find /var/lib/apt/lists -type f -delete && \
+    chroot ./rootfs find /var/cache -type f -delete && \
+    chroot ./rootfs find /var/log -type f -delete && \
+    chroot ./rootfs find /usr/share/doc -type f -delete && \
+    chroot ./rootfs find /usr/share/man -type f -delete && \
+    chroot ./rootfs find /usr/share/locale -type f -delete
 
 FROM scratch
 COPY --from=0 /rootfs /
