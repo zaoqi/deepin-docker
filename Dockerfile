@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y debootstrap && \
     chroot ./rootfs find /usr/share/locale -type f -delete
 
 FROM scratch
+LABEL maintainer='Peter Wu <piterwu@outlook.com>'
 COPY --from=0 /rootfs /
 
 ENV TERM=xterm \
@@ -39,8 +40,4 @@ RUN rm /bin/sh && \
     find /usr/share/doc -type f -delete && \
     find /usr/share/man -type f -delete
 
-RUN apt-get update && \
-  env DEBIAN_FRONTEND=noninteractive apt-get -y full-upgrade && \
-  env DEBIAN_FRONTEND=noninteractive apt-get -y autoremove && \
-  apt-get clean && rm -rf /var/cache/apt/archives/* && \
-  rm -rf /var/lib/apt/lists/*
+CMD ["/bin/bash"]
