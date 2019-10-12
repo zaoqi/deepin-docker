@@ -23,7 +23,9 @@ FROM scratch
 COPY --from=0 /rootfs /
 
 ENV TERM=xterm \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.utf8 \
+    PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/sbin:/usr/sbin
 
 RUN rm /bin/sh && \
     ln -s /bin/bash /bin/sh && \
